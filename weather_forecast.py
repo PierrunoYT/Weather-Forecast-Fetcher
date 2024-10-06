@@ -1,6 +1,6 @@
 import requests
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Set up API key and base URL
 API_KEY = os.environ.get('OPENWEATHER_API_KEY')
@@ -28,6 +28,15 @@ def fetch_weather_forecast(city, country_code, units='metric'):
         print(f"Error fetching weather data: {e}")
         return None
 
+def get_daily_forecast(data):
+    """Extract daily forecast from the API response."""
+    daily_forecast = {}
+    for forecast in data['list']:
+        date = datetime.fromtimestamp(forecast['dt']).date()
+        if date not in daily_forecast:
+            daily_forecast[date] = forecast
+    return daily_forecast
+
 def display_weather_forecast(data):
     """Display weather forecast information."""
     if not data:
@@ -38,9 +47,8 @@ def display_weather_forecast(data):
     country = data['city']['country']
     print(f"\nWeather Forecast for {city}, {country}:\n")
 
-    for forecast in data['list'][:5]:  # Display forecast for the next 5 time slots
-        timestamp = datetime.fromtimestamp(forecast['dt'])
-        date = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    daily_forecast = get_daily_forecast(data)
+    for date, forecast in daily_forecast.items():
         temp = forecast['main']['temp']
         description = forecast['weather'][0]['description']
         
