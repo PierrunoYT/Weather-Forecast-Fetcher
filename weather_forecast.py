@@ -9,7 +9,10 @@ BASE_URL = "http://api.openweathermap.org/data/2.5/forecast"
 def fetch_weather_forecast(city, country_code, units='metric'):
     """Fetch weather forecast from OpenWeather API."""
     if not API_KEY:
-        raise ValueError("API key not found. Please set the OPENWEATHER_API_KEY environment variable.")
+        raise ValueError("API key not found. Please set the OPENWEATHER_API_KEY environment variable using:\n"
+                         "set OPENWEATHER_API_KEY=your_api_key_here\n"
+                         "or for permanent setting:\n"
+                         "setx OPENWEATHER_API_KEY your_api_key_here")
 
     params = {
         'q': f"{city},{country_code}",
