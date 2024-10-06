@@ -37,7 +37,7 @@ def get_daily_forecast(data):
             daily_forecast[date] = forecast
     return daily_forecast
 
-def display_weather_forecast(data):
+def display_weather_forecast(data, forecast_type='all', specific_date=None):
     """Display weather forecast information."""
     if not data:
         print("No weather data available.")
@@ -48,23 +48,51 @@ def display_weather_forecast(data):
     print(f"\nWeather Forecast for {city}, {country}:\n")
 
     daily_forecast = get_daily_forecast(data)
-    for date, forecast in daily_forecast.items():
-        temp = forecast['main']['temp']
-        description = forecast['weather'][0]['description']
-        
-        print(f"Date: {date}")
-        print(f"Temperature: {temp}°C")
-        print(f"Description: {description}")
-        print("-" * 30)
+
+    if forecast_type == 'specific' and specific_date:
+        if specific_date in daily_forecast:
+            display_day_forecast(specific_date, daily_forecast[specific_date])
+        else:
+            print(f"No forecast available for {specific_date}")
+    elif forecast_type == 'today':
+        today = datetime.now().date()
+        if today in daily_forecast:
+            display_day_forecast(today, daily_forecast[today])
+        else:
+            print("No forecast available for today")
+    else:  # 'all' or any other input
+        for date, forecast in daily_forecast.items():
+            display_day_forecast(date, forecast)
+
+def display_day_forecast(date, forecast):
+    """Display forecast for a single day."""
+    temp = forecast['main']['temp']
+    description = forecast['weather'][0]['description']
+    
+    print(f"Date: {date}")
+    print(f"Temperature: {temp}°C")
+    print(f"Description: {description}")
+    print("-" * 30)
 
 def main():
     city = input("Enter city name: ")
     country_code = input("Enter country code (e.g., US, GB, DE): ")
+    
+    forecast_type = input("Enter forecast type (today/all/specific): ").lower()
+    specific_date = None
+    
+    if forecast_type == 'specific':
+        date_input = input("Enter date (YYYY-MM-DD): ")
+        try:
+            specific_date = datetime.strptime(date_input, "%Y-%m-%d").date()
+        except ValueError:
+            print("Invalid date format. Using 'all' forecast type.")
+            forecast_type = 'all'
 
     try:
         forecast_data = fetch_weather_forecast(city, country_code)
         if forecast_data:
-            display_weather_forecast(forecast_data)
+            display_weather_forecast(forecast_data, forecast_type, specific_date)
     except ValueError as e:
         print(f"Error: {e}")
 
