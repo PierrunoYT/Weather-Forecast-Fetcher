@@ -19,7 +19,7 @@ Weather-Forecast-Fetcher is a Python application that fetches and displays weath
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/Weather-Forecast-Fetcher.git
+   git clone https://github.com/PierrunoYT/Weather-Forecast-Fetcher.git
    cd Weather-Forecast-Fetcher
    ```
 
